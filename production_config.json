@@ -4,7 +4,6 @@
     "listen": "localhost"
   },
   "client": {
-    "apiUrl": "https://toybox-agri.herokuapp.com/",
     "debugMode": false
   }
 }

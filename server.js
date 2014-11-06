@@ -15,6 +15,8 @@ var port = process.env.PORT || config.http.port || 3000
 
 var app = express()
 
+if (process.env.NODE_ENV === 'production') config.client.apiUrl = process.env.appUrl
+
 var fixPath = function (pathString) {
   return path.resolve(path.normalize(pathString))
 }
@@ -58,10 +60,9 @@ app.get('/status', function(req, res) {
   res.send(200)
 })
 
-// for test
-if (config.isDev) {
+app.listen(port)
 
+if (config.isDev) {
+  console.log('playground-agri is running at: http://localhost:' + port)
 }
 
-app.listen(port)
-console.log('playground-agri is running at: http://localhost:' + port)
