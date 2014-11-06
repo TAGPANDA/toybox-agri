@@ -57,5 +57,5 @@ if (config.isDev) {
 
 }
 
-app.listen(config.http.port)
+app.listen(process.env.PORT || config.http.port || 3000)
 console.log('playground-agri is running at: http://localhost:' + config.http.port)
