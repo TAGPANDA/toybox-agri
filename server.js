@@ -33,9 +33,6 @@ hbs.registerPartials(__dirname + '/views/partials');
 app.set('view engine', 'hbs')
 app.set('views', __dirname + '/views')
 
-if (process.env.NODE_ENV === 'production') appUrl = process.env.APP_URL
-else appUrl = 'http://localhost:' + config.http.port
-
 // API
 app.get('/api/agri/list', api.list)
 app.get('/api/agri/get/:id', api.get)
@@ -47,7 +44,7 @@ app.get('/', function(req, res) {
   api.all(function(list) {
     res.locals = {
       title: 'Playground Agri',
-      location: appUrl,
+      location: config.client.apiUrl,
       list: list
     }
 

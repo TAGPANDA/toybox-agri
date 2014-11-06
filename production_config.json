@@ -1,0 +1,11 @@
+{
+  "isDev": false,
+  "http": {
+    "listen": "localhost",
+    "port": 3000
+  },
+  "client": {
+    "apiUrl": "https://toybox-agri.herokuapp.com/",
+    "debugMode": false
+  }
+}
