@@ -53,6 +53,11 @@ app.get('/', function(req, res) {
   });
 })
 
+// health check
+app.get('/status', function(req, res) {
+  res.send(200)
+})
+
 // for test
 if (config.isDev) {
 
