@@ -44,7 +44,7 @@ app.get('/api/agri/create', api.add)
 app.get('/', function(req, res) {
   api.all(function(list) {
     res.locals = {
-      title: 'Playground Agri',
+      title: 'Toybox Agri',
       location: config.client.apiUrl,
       list: list
     }
