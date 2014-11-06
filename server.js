@@ -11,6 +11,7 @@ var pg = require('pg')
 var hbs = require('hbs')
 
 var api = require('./api')
+var port = process.env.PORT || config.http.port || 3000
 
 var app = express()
 
@@ -57,5 +58,5 @@ if (config.isDev) {
 
 }
 
-app.listen(process.env.PORT || config.http.port || 3000)
-console.log('playground-agri is running at: http://localhost:' + config.http.port)
+app.listen(port)
+console.log('playground-agri is running at: http://localhost:' + port)
