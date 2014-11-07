@@ -1,12 +1,26 @@
+
 body {
-  background: #fff;
+	font-family: 'Rokkitt', serif;
+	background: #f6f6f6;
+	color: #250600;
 }
 
 h1 {
-	font-size: 48px;
+	font-family: 'Bowlby One', cursive;
+	font-size: 52px;
+	text-shadow: -1px 1px rgba(0, 0, 0, .3)
+}
+
+.lead, h2, h3, th {
+	color: #310;
+}
+
+.table-striped > tbody > tr:nth-child(even) > td, .table-striped > tbody > tr:nth-child(even) > th {
+	background-color: #f0f0f0;
 }
 
 .wrap {
+	background: #fff;
 	min-height: 100%;
 	height: auto !important;
 	height: 100%;
@@ -15,5 +29,5 @@ h1 {
 }
 
 .container {
-	padding: 20px 15px 0;
+	padding: 5px 15px 0;
 }
