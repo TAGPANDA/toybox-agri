@@ -1,9 +1,0 @@
-{
-  "isDev": false,
-  "http": {
-    "listen": "localhost"
-  },
-  "client": {
-    "debugMode": false
-  }
-}

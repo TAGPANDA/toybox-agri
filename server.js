@@ -5,17 +5,19 @@ var express = require('express')
 var helmet = require('helmet')
 var bodyParser = require('body-parser')
 var compress = require('compression')
-var config = require('getconfig')
 var serveStatic = require('serve-static')
 var pg = require('pg')
 var hbs = require('hbs')
 
 var api = require('./api')
-var port = process.env.PORT || config.http.port || 3000
 
-var app = express()
+var port = process.env.PORT || 3000
 
-if (process.env.NODE_ENV === 'production') config.client.apiUrl = process.env.APP_URL
+var app = module.exports = express()
+
+var apiUrl = 'http://localhost:3000/'
+
+if (process.env.NODE_ENV === 'production') apiUrl = process.env.APP_URL
 
 var fixPath = function (pathString) {
   return path.resolve(path.normalize(pathString))
@@ -47,7 +49,7 @@ app.get('/', function(req, res) {
   api.all(function(list) {
     res.locals = {
       title: 'Toybox Agri',
-      location: config.client.apiUrl,
+      location: apiUrl,
       list: list
     }
 
@@ -60,8 +62,10 @@ app.get('/status', function(req, res) {
   res.sendStatus(200)
 })
 
-app.listen(port)
+if (!module.parent) {
+  app.listen(port);
+}
 
-if (config.isDev) {
+if (process.env.NODE_ENV !== 'production') {
   console.log('playground-agri is running at: http://localhost:' + port)
 }
