@@ -1,0 +1,14 @@
+box: wercker/ubuntu12.04-nodejs0.10
+services:
+    - wercker/postgresql
+build:
+  steps:
+    - npm-install
+    - script:
+        name: psql setup
+        code: |
+            npm run dbcreate
+    - npm-test
+deploy:
+    steps:
+        - heroku-deploy

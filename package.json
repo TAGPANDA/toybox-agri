@@ -1,0 +1,59 @@
+{
+  "name": "toybox-agri",
+  "author": "TAG PANDA",
+  "version": "0.0.1",
+  "main": "server.js",
+  "scripts": {
+    "dbcreate": "node dbcreate",
+    "pretest": "./node_modules/.bin/jshint test/*.js dev/*.js",
+    "test": "./node_modules/.bin/_mocha --require intelli-espower-loader test/*.js",
+    "build": "./node_modules/.bin/gulp build",
+    "watch": "./node_modules/.bin/gulp watch"
+  },
+  "directories": {
+    "test": "test/"
+  },
+  "dependencies": {
+    "body-parser": "^1.4.3",
+    "clientconfig": "^1.0.0",
+    "compression": "^1.0.8",
+    "express": "^4.6.1",
+    "express-react-views": "^0.6.0",
+    "express-validator": "^2.6.0",
+    "fibers": "^1.0.2",
+    "handlebars": "^2.0.0",
+    "hbs": "^2.7.0",
+    "helmet": "^0.3.2",
+    "jquery": "^2.1.1",
+    "moment": "^2.8.3",
+    "node-jsx": "^0.12.0",
+    "pg": "^3.6.2",
+    "react": "^0.12.0",
+    "serve-static": "^1.3.2"
+  },
+  "devDependencies": {
+    "browserify": "^6.2.0",
+    "espower-loader": "^0.9.1",
+    "gulp": "^3.8.10",
+    "gulp-notify": "^2.0.1",
+    "intelli-espower-loader": "^0.4.0",
+    "jshint": "^2.5.10",
+    "mocha": "^2.0.1",
+    "power-assert": "^0.9.1",
+    "reactify": "^0.15.2",
+    "supertest": "^0.14.0",
+    "vinyl-source-stream": "^1.0.0",
+    "watchify": "^2.1.1"
+  },
+  "jshintConfig": {
+    "asi": true,
+    "browser": true,
+    "curly": false,
+    "expr": true,
+    "indent": 2,
+    "loopfunc": true,
+    "node": true,
+    "trailing": true,
+    "white": true
+  }
+}
