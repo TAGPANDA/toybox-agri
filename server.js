@@ -6,6 +6,7 @@ var fs = require('fs')
 var express = require('express')
 var helmet = require('helmet')
 var bodyParser = require('body-parser')
+var expressValidator = require('express-validator')
 var compress = require('compression')
 var serveStatic = require('serve-static')
 var pg = require('pg')
@@ -34,6 +35,13 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(helmet.xssFilter())
 app.use(helmet.nosniff())
+app.use(expressValidator({
+ customValidators: {
+    isNumeric: function(value) {
+      return !isNaN(parseFloat(value)) && isFinite(value);
+    }
+  }
+}));
 
 // Template
 Handlebars.registerPartial(

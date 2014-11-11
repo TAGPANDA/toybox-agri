@@ -19,6 +19,7 @@
     "compression": "^1.0.8",
     "express": "^4.6.1",
     "express-react-views": "^0.6.0",
+    "express-validator": "^2.6.0",
     "fibers": "^1.0.2",
     "handlebars": "^2.0.0",
     "hbs": "^2.7.0",

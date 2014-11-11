@@ -1,7 +1,7 @@
 'use strict';
 
 var pg = require('pg')
-
+var expressValidator = require('express-validator')
 
 function get(id, cb) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
@@ -34,11 +34,28 @@ exports.list = function (req, res) {
 }
 
 exports.add = function (req, res) {
+  var util = require('util')
   var q
-  if (!Object.keys(req.body).length) q = req.query
-  else q = req.body
 
-  if (!q.temp || !q.humi) return res.status(400).send({ error: 'Bad Request' })
+  if (!Object.keys(req.body).length) {
+    q = req.query
+    req.checkQuery('temp', 'Invalid temp').notEmpty().isNumeric()
+    req.checkQuery('humi', 'Invalid humi').notEmpty().isNumeric()
+  } else {
+    q = req.body
+    req.checkBody('temp', 'Invalid temp').notEmpty().isNumeric()
+    req.checkBody('humi', 'Invalid humi').notEmpty().isNumeric()
+  }
+
+  var errors = req.validationErrors()
+
+  if (errors) {
+    res.status(400).send({
+      message: 'Bad Request',
+      error: errors
+    })
+    return
+  }
 
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
     client.query('INSERT INTO agri("temp", "humi") VALUES($1, $2)', [q.temp, q.humi])
