@@ -31,3 +31,7 @@ h1 {
 .container {
 	padding: 5px 15px 0;
 }
+
+.form-group {
+	margin-right: 10px;
+}

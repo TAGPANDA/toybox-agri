@@ -1,3 +1,5 @@
+'use strict';
+
 var path = require('path')
 var fs = require('fs')
 
@@ -7,8 +9,11 @@ var bodyParser = require('body-parser')
 var compress = require('compression')
 var serveStatic = require('serve-static')
 var pg = require('pg')
-var hbs = require('hbs')
+var Handlebars = require('handlebars')
+require('node-jsx').install({extension:'.jsx'})
+var React = require('react')
 
+var Agri = require('./dev/view.jsx')
 var api = require('./api')
 
 var port = process.env.PORT || 3000
@@ -25,18 +30,21 @@ var fixPath = function (pathString) {
 
 app.use(compress())
 app.use(serveStatic(fixPath('public')))
-
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-
 app.use(helmet.xssFilter())
 app.use(helmet.nosniff())
 
-hbs.registerPartial('partial', fs.readFileSync(__dirname + '/views/partial.hbs', 'utf8'));
-hbs.registerPartials(__dirname + '/views/partials');
+// Template
+Handlebars.registerPartial(
+  'header',
+  fs.readFileSync(__dirname + '/views/partials/header.hbs', 'utf8'))
 
-app.set('view engine', 'hbs')
-app.set('views', __dirname + '/views')
+Handlebars.registerPartial(
+  'copyright',
+  fs.readFileSync(__dirname + '/views/partials/copyright.hbs', 'utf8'))
+
+var sourceIndex = fs.readFileSync(__dirname + '/views/index.hbs', 'utf8')
 
 // API
 app.get('/api/agri/list', api.list)
@@ -44,17 +52,28 @@ app.get('/api/agri/get/:id', api.get)
 app.get('/api/agri/delete/:id', api.delete)
 app.post('/api/agri/create', api.add)
 app.get('/api/agri/create', api.add)
-
-app.get('/', function(req, res) {
+app.get('/api/agri/all', function(req, res) {
   api.all(function(list) {
-    res.locals = {
-      title: 'Toybox Agri',
-      location: apiUrl,
-      list: list
-    }
+    res.send(list)
+  })
+})
 
-    res.render('index')
-  });
+// toppage
+app.get('/', function(req, res) {
+  res.setHeader('Content-Type', 'text/html')
+
+  api.all(function(list) {
+    Handlebars.registerPartial(
+      'content', 
+      React.renderToStaticMarkup(React.createElement(Agri, {list: list})))
+
+    var template = Handlebars.compile(sourceIndex)
+
+    res.send(template({
+      title: 'Toybox Agri',
+      location: apiUrl
+    }))
+  })
 })
 
 // health check
@@ -62,10 +81,10 @@ app.get('/status', function(req, res) {
   res.sendStatus(200)
 })
 
-if (!module.parent) {
-  app.listen(port);
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port)
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  console.log('playground-agri is running at: http://localhost:' + port)
+  console.log('Toybox Agri is running at: http://localhost:' + port)
 }

@@ -1,5 +1,7 @@
 # toybox-agri
 
+[![wercker status](https://app.wercker.com/status/f3a59d789a5e0bb61a0a508a77f2beb8/s "wercker status")](https://app.wercker.com/project/bykey/f3a59d789a5e0bb61a0a508a77f2beb8)
+
 ## heroku
 
 ```
@@ -7,7 +9,7 @@ $ heroku addons:add heroku-postgresql:dev
 $ heroku addons:docs heroku-postgresql
 $ heroku pg:wait
 $ heroku config | grep HEROKU_POSTGRESQL
-$ heroku pg:promote HEROKU_POSTGRESQL_CHARCOAL_URL
+$ heroku pg:promote HEROKU_POSTGRESQL_XXX_URL
 ```
 
 ## db setup
@@ -19,18 +21,19 @@ heroku pg:psql
 ```
 
 ```sql
-dsbqcnqudpb3h=> create table agri(
-dsbqcnqudpb3h(> id serial,
-dsbqcnqudpb3h(> temp varchar,
-dsbqcnqudpb3h(> humi varchar,
-dsbqcnqudpb3h(> created_at TIMESTAMP NOT NULL DEFAULT now());
+create table agri(
+  id serial,
+  temp varchar,
+  humi varchar,
+  created_at TIMESTAMP NOT NULL DEFAULT now()
+);
 ```
 
 ### query example
 
 ```sql
-dsbqcnqudpb3h=> insert into "agri" (temp, humi) values ('20', '50');
-dsbqcnqudpb3h=> select * from agri;
+insert into "agri" (temp, humi) values ('20', '50');
+select * from agri;
  id | temp | humi |         created_at
 ----+------+------+----------------------------
   1 | 20   | 50   | 2014-11-08 09:29:55.20633
@@ -42,6 +45,7 @@ dsbqcnqudpb3h=> select * from agri;
 $ initdb /usr/local/var/postgres -E utf8
 $ pg_ctl -D /usr/local/var/postgres start
 $ heroku pg:pull HEROKU_POSTGRESQL_XXX_URL localagri --app APPNAME
+$ psql localagri
 ```
 
 ## Local Usage
@@ -49,6 +53,10 @@ $ heroku pg:pull HEROKU_POSTGRESQL_XXX_URL localagri --app APPNAME
 ```
 $ export DATABASE_URL=tcp://localhost:5432/localagri
 $ foreman start
+```
+
+```
+$ npm run watch
 ```
 
 ## Author
