@@ -38,10 +38,10 @@ app.use(helmet.nosniff())
 app.use(expressValidator({
  customValidators: {
     isNumeric: function(value) {
-      return !isNaN(parseFloat(value)) && isFinite(value);
+      return !isNaN(parseFloat(value)) && isFinite(value)
     }
   }
-}));
+}))
 
 // Template
 Handlebars.registerPartial(
