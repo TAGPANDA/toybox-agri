@@ -1,4 +1,5 @@
 var React = require('react')
+var moment = require('moment')
 
 var sendRequest = require('./sendRequest')
 
@@ -113,13 +114,14 @@ var Agri = module.exports = React.createClass({
           <tbody>
             {result.map(function(result) {
               var removeItem = this.removeItem.bind(this, result.id)
+              var date = moment(result.created_at).format('YYYY/MM/DD H:mm:ss')
 
               return (
                 <tr key={result.id}>
                   <td>{result.id}</td>
                   <td>{result.temp}</td>
                   <td>{result.humi}</td>
-                  <td>{result.created_at}</td>
+                  <td>{date}</td>
                   <td><RemoveAgri onClick={removeItem}/></td>
                 </tr>
               )
