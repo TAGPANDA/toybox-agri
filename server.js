@@ -1,27 +1,48 @@
-'use strict';
+'use strict'
 
 var path = require('path')
 var fs = require('fs')
 
 var express = require('express')
+var session = require('express-session')
 var helmet = require('helmet')
 var bodyParser = require('body-parser')
 var expressValidator = require('express-validator')
 var compress = require('compression')
 var serveStatic = require('serve-static')
-var pg = require('pg')
 var Handlebars = require('handlebars')
 require('node-jsx').install({extension:'.jsx'})
-var React = require('react')
 
-var Agri = require('./dev/view.jsx')
 var api = require('./api')
 
-var port = process.env.PORT || 3000
+var port = process.env.PORT || 5000
 
 var app = module.exports = express()
 
-var apiUrl = 'http://localhost:3000/'
+var apiUrl = 'http://localhost:5000/'
+
+var passport = require('passport')
+var GoogleStrategy = require('passport-google').Strategy
+
+passport.serializeUser(function (user, done) {
+  done(null, user)
+})
+
+passport.deserializeUser(function (obj, done) {
+  done(null, obj)
+})
+
+passport.use(new GoogleStrategy({
+    returnURL: apiUrl + 'auth/google/return',
+    realm: apiUrl
+  },
+  function (identifier, profile, done) {
+    process.nextTick(function () {
+      profile.identifier = identifier
+      return done(null, profile)
+    })
+  }
+))
 
 if (process.env.NODE_ENV === 'production') apiUrl = process.env.APP_URL
 
@@ -35,9 +56,17 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(helmet.xssFilter())
 app.use(helmet.nosniff())
+app.use(session({
+  secret: 'keyboard cat2',
+  resave: true,
+  saveUninitialized: true,
+  cookie: { maxAge: 60000 }
+}))
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(expressValidator({
  customValidators: {
-    isNumeric: function(value) {
+    isNumeric: function (value) {
       return !isNaN(parseFloat(value)) && isFinite(value)
     }
   }
@@ -49,10 +78,15 @@ Handlebars.registerPartial(
   fs.readFileSync(__dirname + '/views/partials/header.hbs', 'utf8'))
 
 Handlebars.registerPartial(
+  'footer',
+  fs.readFileSync(__dirname + '/views/partials/footer.hbs', 'utf8'))
+
+Handlebars.registerPartial(
   'copyright',
   fs.readFileSync(__dirname + '/views/partials/copyright.hbs', 'utf8'))
 
 var sourceIndex = fs.readFileSync(__dirname + '/views/index.hbs', 'utf8')
+var sourceLogin = fs.readFileSync(__dirname + '/views/login.hbs', 'utf8')
 
 // API
 app.get('/api/agri/list', api.list)
@@ -60,32 +94,59 @@ app.get('/api/agri/get/:id', api.get)
 app.get('/api/agri/delete/:id', api.delete)
 app.post('/api/agri/create', api.add)
 app.get('/api/agri/create', api.add)
-app.get('/api/agri/all', function(req, res) {
-  api.all(function(list) {
+app.get('/api/agri/all', function (req, res) {
+  var hour = 3600000
+
+  res.setHeader('Cache-Control', 'public, max-age=' + hour)
+  res.setHeader('Expires', new Date(Date.now() + hour).toString())
+
+  api.all(function (list) {
     res.send(list)
   })
 })
 
+app.get('/login', function (req, res) {
+  res.setHeader('Content-Type', 'text/html')
+  res.send(Handlebars.compile(sourceLogin)({
+    title: 'Toybox Agri',
+    user: req.user
+  }).replace(/[\n\t]/g, ''))
+})
+
+app.get('/auth/google', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function (req, res) {
+    res.redirect('/')
+  })
+
+app.get('/auth/google/return', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/')
+  })
+
+app.get('/logout', function (req, res) {
+  req.logout()
+  res.redirect('/')
+})
+
 // toppage
-app.get('/', function(req, res) {
+app.get('/', ensureAuthenticated, function (req, res) {
   res.setHeader('Content-Type', 'text/html')
 
-  api.all(function(list) {
-    Handlebars.registerPartial(
-      'content', 
-      React.renderToStaticMarkup(React.createElement(Agri, {list: list})))
-
+  api.all(function () {
     var template = Handlebars.compile(sourceIndex)
 
     res.send(template({
       title: 'Toybox Agri',
-      location: apiUrl
-    }))
+      location: apiUrl,
+      user: req.user
+    }).replace(/[\n\t]/g, ''))
   })
 })
 
 // health check
-app.get('/status', function(req, res) {
+app.get('/status', function (req, res) {
   res.sendStatus(200)
 })
 
@@ -95,4 +156,9 @@ if (process.env.NODE_ENV !== 'test') {
 
 if (process.env.NODE_ENV !== 'production') {
   console.log('Toybox Agri is running at: http://localhost:' + port)
+}
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next() }
+  res.redirect('/login')
 }
