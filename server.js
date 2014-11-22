@@ -24,23 +24,23 @@ var apiUrl = 'http://localhost:5000/'
 if (process.env.NODE_ENV === 'production') apiUrl = process.env.APP_URL
 
 var passport = require('passport')
-var GoogleStrategy = require('passport-google').Strategy
+var TwitterStrategy = require('passport-twitter').Strategy
 
-passport.serializeUser(function (user, done) {
+
+passport.serializeUser(function(user, done) {
   done(null, user)
 })
 
-passport.deserializeUser(function (obj, done) {
+passport.deserializeUser(function(obj, done) {
   done(null, obj)
 })
 
-passport.use(new GoogleStrategy({
-    returnURL: apiUrl + 'auth/google/return',
-    realm: apiUrl
-  },
-  function (identifier, profile, done) {
+passport.use(new TwitterStrategy({
+    consumerKey: process.env.TWITTER_CONSUMER_KEY,
+    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+    callbackURL: apiUrl + 'auth/twitter/callback'
+  }, function (token, tokenSecret, profile, done) {
     process.nextTick(function () {
-      profile.identifier = identifier
       return done(null, profile)
     })
   }
@@ -107,6 +107,15 @@ app.get('/api/agri/all', function (req, res) {
   })
 })
 
+app.get('/auth/twitter',
+  passport.authenticate('twitter'));
+
+app.get('/auth/twitter/callback', 
+  passport.authenticate('twitter', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/');
+  });
+
 app.get('/login', function (req, res) {
   res.setHeader('Content-Type', 'text/html')
   res.send(Handlebars.compile(sourceLogin)({
@@ -114,18 +123,6 @@ app.get('/login', function (req, res) {
     user: req.user
   }).replace(/[\n\t]/g, ''))
 })
-
-app.get('/auth/google', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function (req, res) {
-    res.redirect('/')
-  })
-
-app.get('/auth/google/return', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/')
-  })
 
 app.get('/logout', function (req, res) {
   req.logout()
