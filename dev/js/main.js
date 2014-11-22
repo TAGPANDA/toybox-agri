@@ -6,7 +6,6 @@ var loadcss = require('./loadcss')
 
 
 // async load css
-loadcss('/css/bootstrap.css')
 loadcss('//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css')
 loadcss('//fonts.googleapis.com/css?family=Bowlby+One')
 loadcss('//fonts.googleapis.com/css?family=Rokkitt')

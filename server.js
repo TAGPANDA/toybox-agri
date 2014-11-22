@@ -62,7 +62,7 @@ app.use(session({
   secret: 'keyboard cat2',
   resave: true,
   saveUninitialized: true,
-  cookie: { maxAge: 60000 }
+  cookie: { maxAge: 86400 }
 }))
 app.use(passport.initialize())
 app.use(passport.session())
