@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 var path = require('path')
 var fs = require('fs')
@@ -20,6 +20,8 @@ var port = process.env.PORT || 5000
 var app = module.exports = express()
 
 var apiUrl = 'http://localhost:5000/'
+
+if (process.env.NODE_ENV === 'production') apiUrl = process.env.APP_URL
 
 var passport = require('passport')
 var GoogleStrategy = require('passport-google').Strategy
