@@ -62,7 +62,7 @@ app.use(session({
   secret: 'keyboard cat2',
   resave: true,
   saveUninitialized: true,
-  cookie: { maxAge: 86400 }
+  cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 } // 1 week
 }))
 app.use(passport.initialize())
 app.use(passport.session())
@@ -86,6 +86,10 @@ Handlebars.registerPartial(
 Handlebars.registerPartial(
   'copyright',
   fs.readFileSync(__dirname + '/views/partials/copyright.hbs', 'utf8'))
+
+Handlebars.registerHelper('variable', function (name, val) {
+  return new Handlebars.SafeString('var ' + name + '=' + val)
+})
 
 var sourceIndex = fs.readFileSync(__dirname + '/views/index.hbs', 'utf8')
 var sourceLogin = fs.readFileSync(__dirname + '/views/login.hbs', 'utf8')
@@ -119,8 +123,7 @@ app.get('/auth/twitter/callback',
 app.get('/login', function (req, res) {
   res.setHeader('Content-Type', 'text/html')
   res.send(Handlebars.compile(sourceLogin)({
-    title: 'Toybox Agri',
-    user: req.user
+    title: 'Toybox Agri'
   }).replace(/[\n\t]/g, ''))
 })
 
@@ -139,7 +142,10 @@ app.get('/', ensureAuthenticated, function (req, res) {
     res.send(template({
       title: 'Toybox Agri',
       location: apiUrl,
-      user: req.user
+      user: JSON.stringify({
+        name: req.user.displayName,
+        img: req.user.photos[0].value
+      })
     }).replace(/[\n\t]/g, ''))
   })
 })

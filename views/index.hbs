@@ -1,16 +1,9 @@
 {{> header }}
 <body>
 	<div class="wrapper">
+		<header id="nav"></header>
 		<div class="container">
 			<section class="col-sm-10 col-sm-offset-1">
-				<header>
-				<nav class="navbar navbar-fixed-top" role="navigation">
-					<div class="container">
-						<form class="form-signin" action="/logout">
-							<button class="btn btn-default" type="submit">Logout <i class="fa fa-sign-out"></i></button>
-						</form>
-					</div>
-				</nav>
 				<header>
 					<div class="page-header text-center">
 						<h1>{{title}}</h1>
@@ -20,12 +13,17 @@
 					</p>
 				</header>
 				<hr/>
+				<p>GET: <code>{{location}}api/agri/create?temp=CC&humi=PP</code></p>
+				<p>or POST: <code>{{location}}api/agri/create</code></p>
 				<div id="content"></div>
 				<hr/>
 {{> footer }}
 			</section>
 		</div>
 	</div>
+<script>
+{{variable 'user' user}}
+</script>
 <script src="/js/main.js"></script>
 </body>
 </html>

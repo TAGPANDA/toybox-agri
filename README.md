@@ -52,6 +52,9 @@ $ psql localagri
 
 ```
 $ export DATABASE_URL=tcp://localhost:5432/localagri
+$ exprt TWITTER_CONSUMER_KEY=???
+$ exprt TWITTER_CONSUMER_SECRET=???
+$ pg_ctl -D /usr/local/var/postgres start
 $ foreman start
 ```
 

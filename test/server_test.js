@@ -20,15 +20,15 @@ describe('GET /status', function() {
   })
 })
 
-describe('GET /', function() {
+describe('GET /login', function() {
   it('get index html', function(done) {
     request(app)
-      .get('/')
+      .get('/login')
       .expect(200)
       .end(function(err, res) {
         if (err) return done(err)
 
-        assert.equal(res.text.substr(0, 15), '<!doctype html>')
+        assert.equal(res.text.substr(0, 15), '<!DOCTYPE html>')
         done()
       })
   })
