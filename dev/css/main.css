@@ -1,12 +1,12 @@
 
 body {
-	font-family: 'Rokkitt', serif;
+	font-family: 'Rokkitt', Helvetica, serif;
 	background: #f6f6f6;
 	color: #250600;
 }
 
 h1 {
-	font-family: 'Bowlby One', serif;
+	font-family: 'Bowlby One', Helvetica, serif;
 	font-size: 52px;
 	text-shadow: -1px 1px rgba(0, 0, 0, .3)
 }

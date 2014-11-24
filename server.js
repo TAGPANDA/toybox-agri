@@ -4,6 +4,7 @@ var path = require('path')
 var fs = require('fs')
 
 var express = require('express')
+var morgan = require('morgan')
 var session = require('express-session')
 var helmet = require('helmet')
 var bodyParser = require('body-parser')
@@ -19,19 +20,17 @@ var port = process.env.PORT || 5000
 
 var app = module.exports = express()
 
-var apiUrl = 'http://localhost:5000/'
-
-if (process.env.NODE_ENV === 'production') apiUrl = process.env.APP_URL
+var apiUrl = process.env.APP_URL || 'http://localhost:5000/'
 
 var passport = require('passport')
 var TwitterStrategy = require('passport-twitter').Strategy
+var FacebookStrategy = require('passport-facebook').Strategy
 
-
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
   done(null, user)
 })
 
-passport.deserializeUser(function(obj, done) {
+passport.deserializeUser(function (obj, done) {
   done(null, obj)
 })
 
@@ -40,6 +39,22 @@ passport.use(new TwitterStrategy({
     consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
     callbackURL: apiUrl + 'auth/twitter/callback'
   }, function (token, tokenSecret, profile, done) {
+    profile.twitter_token = token
+    profile.twitter_token_secret = tokenSecret
+    process.nextTick(function () {
+      return done(null, profile)
+    })
+  }
+))
+
+passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    authorizationURL: 'https://www.facebook.com/v2.0/dialog/oauth',
+    callbackURL: apiUrl + 'auth/facebook/callback'
+  }, function (token, refreshToken, profile, done) {
+    profile.facebook_token = token
+    profile.facebook_refresh_token = refreshToken
     process.nextTick(function () {
       return done(null, profile)
     })
@@ -53,6 +68,7 @@ var fixPath = function (pathString) {
 }
 
 app.use(compress())
+app.use(morgan('combined'))
 app.use(serveStatic(fixPath('public')))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -112,15 +128,27 @@ app.get('/api/agri/all', function (req, res) {
 })
 
 app.get('/auth/twitter',
-  passport.authenticate('twitter'));
+  passport.authenticate('twitter'))
 
 app.get('/auth/twitter/callback', 
   passport.authenticate('twitter', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/');
-  });
+  function (req, res) {
+    res.redirect('/')
+  })
+
+app.get('/auth/facebook',
+  passport.authenticate('facebook'))
+
+app.get('/auth/facebook/callback', 
+  passport.authenticate('facebook', { failureRedirect: '/login' }),
+  function (req, res) {
+    res.redirect('/')
+  })
 
 app.get('/login', function (req, res) {
+
+  sourceLogin = fs.readFileSync(__dirname + '/views/login.hbs', 'utf8')
+
   res.setHeader('Content-Type', 'text/html')
   res.send(Handlebars.compile(sourceLogin)({
     title: 'Toybox Agri'
@@ -138,13 +166,20 @@ app.get('/', ensureAuthenticated, function (req, res) {
 
   api.all(function () {
     var template = Handlebars.compile(sourceIndex)
+    var photo;
+
+    if (req.user.photos) {
+      photo = req.user.photos[0].value;
+    } else if (req.user.provider === 'facebook') {
+      photo = 'https://graph.facebook.com/' + req.user.id + '/picture?type=small'
+    }
 
     res.send(template({
       title: 'Toybox Agri',
       location: apiUrl,
       user: JSON.stringify({
         name: req.user.displayName,
-        img: req.user.photos[0].value
+        img: photo
       })
     }).replace(/[\n\t]/g, ''))
   })
