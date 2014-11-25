@@ -112,17 +112,17 @@ var sourceLogin = fs.readFileSync(__dirname + '/views/login.hbs', 'utf8')
 
 // API
 app.get('/api/agri/list', api.list)
-app.get('/api/agri/get/:id', api.get)
-app.get('/api/agri/delete/:id', api.delete)
-app.post('/api/agri/create', api.add)
-app.get('/api/agri/create', api.add)
+app.get('/api/agri/get/:id', api.getAgri)
+app.get('/api/agri/delete/:id', api.deleteAgri)
+app.post('/api/agri/create', api.addAgri)
+app.get('/api/agri/create', api.addAgri)
 app.get('/api/agri/all', function (req, res) {
   var hour = 3600000
 
   res.setHeader('Cache-Control', 'public, max-age=' + hour)
   res.setHeader('Expires', new Date(Date.now() + hour).toString())
 
-  api.all(function (list) {
+  api.allAgri(req.user, function (list) {
     res.send(list)
   })
 })
@@ -160,20 +160,20 @@ app.get('/logout', function (req, res) {
   res.redirect('/')
 })
 
-// toppage
-app.get('/', ensureAuthenticated, function (req, res) {
+
+function renderIndex(req, res) {
   res.setHeader('Content-Type', 'text/html')
 
-  api.all(function () {
-    var template = Handlebars.compile(sourceIndex)
-    var photo;
+  var template = Handlebars.compile(sourceIndex)
+  var photo;
 
-    if (req.user.photos) {
-      photo = req.user.photos[0].value;
-    } else if (req.user.provider === 'facebook') {
-      photo = 'https://graph.facebook.com/' + req.user.id + '/picture?type=small'
-    }
+  if (req.user.photos) {
+    photo = req.user.photos[0].value;
+  } else if (req.user.provider === 'facebook') {
+    photo = 'https://graph.facebook.com/' + req.user.id + '/picture?type=small'
+  }
 
+  api.allAgri(req.user, function () {
     res.send(template({
       title: 'Toybox Agri',
       location: apiUrl,
@@ -182,6 +182,19 @@ app.get('/', ensureAuthenticated, function (req, res) {
         img: photo
       })
     }).replace(/[\n\t]/g, ''))
+  })
+}
+
+// toppage
+app.get('/', ensureAuthenticated, function (req, res) {
+  api.findUser(req.user, function (result) {
+    if (result.length === 0) {
+      api.addUser(req.user, function () {
+        renderIndex(req, res)
+      })
+    } else {
+      renderIndex(req, res)
+    }
   })
 })
 
@@ -199,6 +212,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next() }
+  if (req.isAuthenticated()) return next()
+
   res.redirect('/login')
 }

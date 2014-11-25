@@ -5,10 +5,15 @@ body {
 	color: #250600;
 }
 
-h1 {
+.title {
 	font-family: 'Bowlby One', Helvetica, serif;
 	font-size: 52px;
 	text-shadow: -1px 1px rgba(0, 0, 0, .3)
+}
+
+.home {
+	font-family: 'Bowlby One', Helvetica, serif;
+	font-size: 14px;
 }
 
 .lead, h2, h3, th {

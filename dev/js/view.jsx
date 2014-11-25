@@ -95,39 +95,42 @@ var Agri = module.exports = React.createClass({
   },
 
   render: function() {
-    var result = this.state.data;
+    var result = this.state.data
+    console.log(result.length);
 
     return (
       <div className="col-sm-12">
         {this.renderForm(this.createSubmit)}
         <hr/>
-        <table id="agri-list" className="table table-striped table-bordered">
-          <thead>
-            <tr>
-              <th>No.</th>
-              <th>Temp</th>
-              <th>Humi</th>
-              <th>Date</th>
-              <th>Edit</th>
-            </tr>
-          </thead>
-          <tbody>
-            {result.map(function(result) {
-              var removeItem = this.removeItem.bind(this, result.id)
-              var date = moment(result.created_at).format('YYYY/MM/DD H:mm:ss')
+        {result.length !== 0 ? 
+          <table id="agri-list" className="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Temp</th>
+                <th>Humi</th>
+                <th>Date</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.map(function(result) {
+                var removeItem = this.removeItem.bind(this, result.id)
+                var date = moment(result.created_at).format('YYYY/MM/DD H:mm:ss')
 
-              return (
-                <tr key={result.id}>
-                  <td>{result.id}</td>
-                  <td>{result.temp}</td>
-                  <td>{result.humi}</td>
-                  <td>{date}</td>
-                  <td><RemoveAgri onClick={removeItem}/></td>
-                </tr>
-              )
-            }, this)}
-          </tbody>
-        </table>
+                return (
+                  <tr key={result.id}>
+                    <td>{result.id}</td>
+                    <td>{result.temp}</td>
+                    <td>{result.humi}</td>
+                    <td>{date}</td>
+                    <td><RemoveAgri onClick={removeItem}/></td>
+                  </tr>
+                )
+              }, this)}
+            </tbody>
+          </table>
+         : <p className="lead text-center">Data is Not Found!</p>}
       </div>
     )
   },

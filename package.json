@@ -6,7 +6,7 @@
   "scripts": {
     "dbcreate": "node dbcreate",
     "pretest": "jshint test/*.js dev/js/*.js",
-    "test": "_mocha --require intelli-espower-loader test/*.js",
+    "test": "NODE_ENV=test _mocha --require intelli-espower-loader test/*.js",
     "build": "gulp build",
     "watch": "gulp watch",
     "css": "gulp css"
@@ -57,17 +57,6 @@
     "supertest": "^0.14.0",
     "vinyl-source-stream": "^1.0.0",
     "watchify": "^2.1.1"
-  },
-  "jshintConfig": {
-    "asi": true,
-    "browser": true,
-    "curly": false,
-    "expr": true,
-    "indent": 2,
-    "loopfunc": true,
-    "node": true,
-    "trailing": true,
-    "white": true
   },
   "browserify": {
     "transform": [

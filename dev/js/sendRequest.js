@@ -1,6 +1,6 @@
 var $ = require('jquery')
 
-var request = module.exports = {
+module.exports = {
   items: function() {
     return $.ajax({
       url: '/api/agri/all',
