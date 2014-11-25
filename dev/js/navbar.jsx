@@ -7,11 +7,11 @@ var MenuItem = require('react-bootstrap/MenuItem')
 
 
 var Navi = module.exports = React.createClass({
-  getInitialState: function() {
+  getInitialState: function () {
     return {user: this.props.user}
   },
 
-  render: function() {
+  render: function () {
     var result = this.state.user
 
     return (

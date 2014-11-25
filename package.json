@@ -1,6 +1,6 @@
 {
   "name": "toybox-agri",
-  "author": "TAG PANDA",
+  "author": "TAG PANDA, Inc.",
   "version": "0.0.2",
   "main": "server.js",
   "scripts": {

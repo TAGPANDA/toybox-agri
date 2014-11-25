@@ -25,7 +25,7 @@ function handleErrors() {
 function buildScript(isWatch) {
   var b = browserify('./dev/js/main.js', watchify.args)
 
-  var rebundle = function() {
+  var rebundle = function () {
     return b.bundle()
       .on('error', handleErrors)
       .pipe(source('main.js'))
@@ -43,22 +43,22 @@ function buildScript(isWatch) {
   return rebundle()
 }
 
-gulp.task('browserify-watch', function(){
+gulp.task('browserify-watch', function () {
   return buildScript(true)
 })
 
-gulp.task('build', [], function() {
+gulp.task('build', [], function () {
   return buildScript(false)
 })
 
-gulp.task('css', function() {
+gulp.task('css', function () {
   gulp.src('./dev/css/*.css')
     .pipe(minifyCSS())
     .pipe(concat('main.css'))
     .pipe(gulp.dest('./public/css'))
-});
+})
 
-gulp.task('watch', [], function() {
+gulp.task('watch', [], function () {
   gulp.watch('./dev/*.jsx', ['browserify-watch'])
 })
 

@@ -165,10 +165,10 @@ function renderIndex(req, res) {
   res.setHeader('Content-Type', 'text/html')
 
   var template = Handlebars.compile(sourceIndex)
-  var photo;
+  var photo
 
   if (req.user.photos) {
-    photo = req.user.photos[0].value;
+    photo = req.user.photos[0].value
   } else if (req.user.provider === 'facebook') {
     photo = 'https://graph.facebook.com/' + req.user.id + '/picture?type=small'
   }

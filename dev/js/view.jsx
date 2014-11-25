@@ -96,7 +96,6 @@ var Agri = module.exports = React.createClass({
 
   render: function() {
     var result = this.state.data
-    console.log(result.length);
 
     return (
       <div className="col-sm-12">
