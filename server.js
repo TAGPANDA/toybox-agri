@@ -69,7 +69,7 @@ var fixPath = function (pathString) {
 
 app.use(compress())
 app.use(morgan('combined'))
-app.use(serveStatic(fixPath('public')))
+app.use(serveStatic(fixPath('public'), { maxAge: 86400000 }))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(helmet.xssFilter())
