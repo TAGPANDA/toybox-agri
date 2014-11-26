@@ -146,9 +146,6 @@ app.get('/auth/facebook/callback',
   })
 
 app.get('/login', function (req, res) {
-
-  sourceLogin = fs.readFileSync(__dirname + '/views/login.hbs', 'utf8')
-
   res.setHeader('Content-Type', 'text/html')
   res.send(Handlebars.compile(sourceLogin)({
     title: 'Toybox Agri'
@@ -208,7 +205,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  console.log('Toybox Agri is running at: http://localhost:' + port)
+  console.log('Toybox Agri is running at: ', apiUrl)
 }
 
 function ensureAuthenticated(req, res, next) {
