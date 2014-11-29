@@ -1,7 +1,7 @@
 'use strict';
 
 var pg = require('pg')
-// var expressValidator = require('express-validator')
+var expressValidator = require('express-validator')
 
 function findAgri(id, username, cb) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
