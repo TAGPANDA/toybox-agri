@@ -1,7 +1,7 @@
 {
   "name": "toybox-agri",
   "author": "TAG PANDA, Inc.",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "main": "server.js",
   "scripts": {
     "dbcreate": "node dbcreate",
